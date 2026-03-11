@@ -1,0 +1,110 @@
+/* === STYLES PARA SA OWNER-DASHBOARD.HTML === */
+
+/* --- General Page Styles --- */
+body { background-color: #f6f8fb; }
+.page-hero {
+  background: linear-gradient(135deg, #0d6efd 0%, #4dabf7 100%);
+  color: #fff;
+}
+.page-hero .container { padding: 28px 0; }
+
+/* --- Card & Form Styles --- */
+.card { border: 0; box-shadow: 0 6px 18px rgba(13, 110, 253, 0.08); }
+.card-header { background: transparent; font-weight: 600; }
+.btn, .form-control { border-radius: 10px; }
+.form-control { border-radius: 10px; }
+
+/* --- Address Autocomplete Suggestions --- */
+.address-wrapper { position: relative; }
+.address-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  border: 1px solid #dee2e6;
+}
+
+/* --- Image Uploader Styles --- */
+.image-slot {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    transition: border-color 0.2s;
+}
+.image-slot:hover { border-color: #0d6efd; }
+.image-slot .remove-btn { position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background-color: #dc3545; color: white; border-radius: 50%; border: none; font-size: 12px; line-height: 20px; text-align: center; }
+.image-slot .add-icon { font-size: 2rem; color: #adb5bd; }
+
+/* --- [FIX] Z-index for Image Viewer Modal --- */
+/* Ensure the image viewer appears on top of other modals. */
+#imageViewerModal {
+  z-index: 1060;
+}
+
+/* --- [BAG-O] Styles for the New Image Uploader --- */
+.image-upload-slot {
+  position: relative;
+  width: 120px; /* Padak-on */
+  height: 120px; /* Padak-on */
+  border: 2px dashed #ced4da; /* Butangan og box/border */
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden; /* Para dili molapas ang image */
+  background-color: #f8f9fa;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.image-upload-slot:hover {
+  border-color: #0d6efd;
+}
+
+.image-upload-slot i {
+  font-size: 2.5rem; /* Padak-on ang plus icon */
+  color: #adb5bd;
+}
+
+.image-upload-slot.has-image {
+  border-style: solid;
+  border-color: #dee2e6;
+}
+
+.image-upload-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Siguraduhon nga mo-fit ang image */
+}
+
+.image-upload-slot .remove-image-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(220, 53, 69, 0.8);
+  color: white;
+  border-radius: 50%;
+  border: none;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.image-upload-slot:hover .remove-image-btn {
+  opacity: 1; /* Ipakita ang remove button on hover */
+}

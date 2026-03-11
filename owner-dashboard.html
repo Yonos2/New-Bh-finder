@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Dashboard | BH Finder</title>
+   <link rel="icon" href="images/bh2.png" type="image/jpeg">
+  <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ownerdashboard.css">
+
+  <!-- [BAG-O] Leaflet.js para sa Mapa sa Details Modal -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div id="page-container"> <!-- Wrapper para sa sticky footer -->
+
+  <!-- Navigation bar -->
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">BH Finder</a>
+      <div class="d-flex align-items-center">
+        <button class="btn btn-light btn-sm" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!--  Hero Section (header sa dashboard) -->
+  <section class="page-hero">
+    <div class="container d-flex align-items-center justify-content-between">
+      <div>
+        <h2 class="mb-1">Owner Dashboard</h2>
+        <p class="mb-0 opacity-75">Welcome, <span id="tenantName"></span></p>
+      </div>
+      <div class="d-none d-md-block">
+        <i class="bi bi-house-door-fill" style="font-size:40px; opacity:.9"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- [GI-USAB] Main content area gibutang sa sulod sa content-wrap -->
+  <main id="content-wrap" class="container py-4">
+
+    <!--  Form para mag-add og Boarding House -->
+    <div class="card mb-4">
+      <div class="card-header">Add Boarding House</div>
+      <div class="card-body">
+        <form id="addBhForm">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input class="form-control" id="bhName" placeholder="Name" required>
+            </div>
+            <div class="col-md-4 address-wrapper">
+              <input class="form-control" id="bhAddress" placeholder="Address" required autocomplete="off">
+              <!-- Dinhi mogawas ang mga dynamic address suggestions -->
+              <div class="list-group address-suggestions" id="addressSuggestions"></div>
+            </div>
+            <div class="col-md-4">
+              <input type="tel" class="form-control" id="bhPhoneNumber" placeholder="Phone Number" required>
+            </div>
+            <div class="col-md-2">
+              <input type="number" class="form-control" id="bhRooms" placeholder="Available Rooms" required>
+            </div>
+            <div class="col-md-2">
+              <input type="number" class="form-control" id="bhBeds" placeholder="Beds per Room" required>
+            </div>
+            <div class="col-md-4">
+              <input type="number" class="form-control" id="bhPrice" placeholder="Price per Month" required>
+            </div>
+            <!-- Rooms input: owners can add multiple room entries with individual rates -->
+            <div class="col-md-12 mt-2">
+              <label class="form-label">Rooms (add room and price)</label>
+              <button type="button" class="btn btn-sm btn-outline-primary mb-2" id="addRoomRowBtn" data-bs-toggle="modal" data-bs-target="#addRoomDetailsModal">+ Add Room Details</button>
+              <div id="roomsContainer" class="mb-2">
+                <!-- JS will add room rows here -->
+              </div>
+              <div id="addedRoomsList" class="mb-2">
+                <!-- Added rooms will appear here (price + image previews) -->
+              </div>
+              <small class="form-text text-muted">You can add multiple rooms here. Each room will have its own monthly rate.</small>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="bhGender" required>
+                <option value="" disabled selected>Allowed Gender...</option>
+                <option value="both">Male, Female & Member of LGBTQ+(Both)</option>
+                <option value="male">Male Only</option>
+                <option value="female">Female Only</option>
+              </select>
+            </div>
+            <div class="col-md-12">
+              <!--  [BAG-O] Image Uploader Section -->
+              <label class="form-label small">Boarding House Images (maximum of 8)</label>
+              <div id="imageUploader" class="d-flex flex-wrap gap-2">
+                <!-- Ang mga image slots i-generate sa JavaScript -->
+              </div>
+              <input type="file" id="bhImageInput" class="d-none" multiple accept="image/*">
+            </div>
+            <div class="col-md-12">
+              <textarea class="form-control" id="bhAmenities" placeholder="Amenities (Wi-Fi, Laundry, etc.)"></textarea>
+            </div>
+            <div class="col-md-12">
+              <input type="url" class="form-control" id="bhFacebook" placeholder="Facebook Profile/Page Link">
+            </div>
+            <div class="col-md-12">
+              <input type="url" class="form-control" id="bhWebsite" placeholder="Website Link (ex., https://mybh.com)">
+            </div>
+            <!-- [BAG-O] Field para sa Terms and Regulations -->
+            <div class="col-md-12">
+              <textarea class="form-control" id="bhTerms" placeholder="Terms and Regulations (Ex., Booking regulation, Curfew, visitor policy, etc.)" rows="3"></textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!--  Form para mag-update sa existing nga Boarding House -->
+    <div class="card">
+      <div class="card-header">Update My Boarding House</div>
+      <div class="card-body">
+        <form id="updateBhForm">
+          <div class="row g-2">
+            <div class="col-md-3">
+              <input class="form-control" id="updBhId" placeholder="BH ID (auto-filled)" required readonly>
+            </div>
+            <div class="col-md-3">
+              <input class="form-control" id="updAmenities" placeholder="New Amenities">
+            </div>
+            <div class="col-md-3">
+              <input type="url" class="form-control" id="updFacebook" placeholder="New Facebook Link">
+            </div>
+            <div class="col-md-3">
+              <input type="url" class="form-control" id="updWebsite" placeholder="New Website Link">
+            </div>
+            <div class="col-md-12 mt-2">
+              <textarea class="form-control" id="updTerms" placeholder="New Terms and Regulations"></textarea>
+            </div>
+            <div class="col-md-3">
+              <input type="tel" class="form-control" id="updBhPhoneNumber" placeholder="New Phone Number">
+            </div>
+            <div class="col-md-3">
+              <input type="number" class="form-control" id="updRooms" placeholder="Available Rooms">
+            </div>
+            <div class="col-md-3">
+              <input type="number" class="form-control" id="updBeds" placeholder="Beds per Room">
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="updGender">
+                <option value="">Gender (No Change)</option>
+                <option value="both">Male & Female (Both)</option>
+                <option value="male">Male Only</option>
+                <option value="female">Female Only</option>
+              </select>
+            </div>
+
+            <div class="col-md-12 mt-2">
+              <button type="submit" class="btn btn-success w-100">Update</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- [BAG-O] Section para sa mga Booking sa Tenant -->
+    <div class="card mt-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-calendar-check-fill me-2"></i>Tenant Bookings</span>
+        <div class="spinner-border spinner-border-sm text-primary d-none" id="ownerBookingSpinner" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="ownerBookingsList">
+          <!-- Ang mga booking sa mga tenant i-inject dinhi sa ownerdashboard.js -->
+          <p class="text-muted">Loading bookings...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista sa mga Boarding House sa Owner -->
+    <div class="card mt-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>My Boarding Houses</span>
+        <div class="spinner-border spinner-border-sm text-primary d-none" id="myBhListSpinner" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- [BAG-O] Tabs para sa status filtering -->
+        <ul class="nav nav-tabs mb-3" id="bhStatusTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved-pane" type="button" role="tab" aria-controls="approved-pane" aria-selected="true">Approved</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-pane" type="button" role="tab" aria-controls="pending-pane" aria-selected="false">Pending</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected-pane" type="button" role="tab" aria-controls="rejected-pane" aria-selected="false">Rejected</button>
+          </li>
+        </ul>
+        
+        <div class="tab-content" id="myBhTabContent">
+          <div class="tab-pane fade show active" id="approved-pane" role="tabpanel" aria-labelledby="approved-tab">
+            <div id="approvedBhList" class="row"></div>
+          </div>
+          <div class="tab-pane fade" id="pending-pane" role="tabpanel" aria-labelledby="pending-tab">
+            <div id="pendingBhList" class="row"></div>
+          </div>
+          <div class="tab-pane fade" id="rejected-pane" role="tabpanel" aria-labelledby="rejected-tab">
+            <div id="rejectedBhList" class="row"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- New Modal for adding room details during BH creation -->
+<div class="modal fade" id="addRoomDetailsModal" tabindex="-1" aria-labelledby="addRoomDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addRoomDetailsModalLabel">Add Room Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="roomDetailsForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="modalRoomName" class="form-label">Room Name</label>
+              <input type="text" class="form-control" id="modalRoomName" placeholder="ex., Single, Double, Deluxe">
+            </div>
+            <div class="col-md-6">
+              <label for="modalRoomPrice" class="form-label">Price per Month</label>
+              <input type="number" class="form-control" id="modalRoomPrice" placeholder="ex., 2500" required>
+            </div>
+            <div class="col-12">
+              <label for="modalRoomDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="modalRoomDescription" placeholder="ex. Good for 2 people, with own bathroom."></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Room Images (maximum of 6)</label>
+              <div id="modalRoomImageUploader" class="d-flex flex-wrap gap-2 mb-2">
+                <!-- JS will generate 6 box-with-plus slots here -->
+              </div>
+              <input type="file" id="modalRoomImage" class="d-none" accept="image/*" multiple>
+            </div>
+            <div class="col-12">
+              <button type="button" id="addRoomToListBtn" class="btn btn-primary">Add Room</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- [BAG-O] Modal para sa pag-manage sa mga Kwarto -->
+<div class="modal fade" id="manageRoomsModal" tabindex="-1" aria-labelledby="manageRoomsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="manageRoomsModalLabel">Manage Rooms for <span id="modalBhName"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Form para mag-add og kwarto -->
+        <div class="card mb-4">
+          <div class="card-header">Add a New Room</div>
+          <div class="card-body">
+            <form id="addRoomForm">
+              <input type="hidden" id="modalBhId" value="">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="roomName" class="form-label">Room Name</label>
+                  <input type="text" class="form-control" id="roomName" placeholder="ex. Room 101" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="roomPrice" class="form-label">Price per Month</label>
+                  <input type="number" class="form-control" id="roomPrice" placeholder="ex., 2500" required>
+                </div>
+                <div class="col-12">
+                    <label for="roomDescription" class="form-label">Description</label>
+                    <textarea class="form-control" id="roomDescription" placeholder="ex. Good for 2 people, with own bathroom."></textarea>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Room Images (maximum of 6)</label>
+                  <div id="roomImageUploader" class="d-flex flex-wrap gap-2 mb-2">
+                    <!-- room image slots generated by JS -->
+                  </div>
+                  <input type="file" id="roomImageInputModal" class="d-none" multiple accept="image/*">
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="addRoomSpinner"></span>
+                    Add Room
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Lista sa mga kasamtangang kwarto -->
+        <h5>Existing Rooms</h5>
+        <div id="existingRoomsList" class="list-group">
+          <!-- Dinhi i-populate sa JS ang mga kwarto -->
+          <p class="text-muted">No rooms added yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <!-- Modal for Viewing a Single Image -->
+
+  <div class="modal fade" id="imageViewerModal" tabindex="-1" aria-labelledby="imageViewerModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+      <div class="modal-content">
+
+        <div class="modal-header">
+
+          <h5 class="modal-title" id="imageViewerModalLabel">Image Preview</h5>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        </div>
+
+        <div class="modal-body text-center">
+
+          <img src="" id="fullImageView" class="img-fluid" alt="Full-size image preview">
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- [GI-AYO] Gi-update ang Details Modal para mahisama sa Tenant's view -->
+  <div class="modal fade" id="bhDetailsModal" tabindex="-1" aria-labelledby="bhDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="bhDetailsModalLabel">Boarding House Details</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row g-4">
+            <!-- Left Column: Images and Basic Info -->
+            <div class="col-lg-7">
+              <div id="carousel-container-details" class="mb-3">
+                <!-- Carousel injected by JS -->
+              </div>
+              <hr>
+              <h5><i class="bi bi-card-checklist text-primary me-2"></i>Details</h5>
+              <div class="row ps-3">
+                <div class="col-sm-6 mb-2"><strong>Available Rooms:</strong> <span id="modalBhRoomsDetails"></span></div>
+                <div class="col-sm-6 mb-2"><strong>Beds per Room:</strong> <span id="modalBhBedsDetails"></span></div>
+                <div class="col-sm-6 mb-2"><strong>Gender Allowed:</strong> <span id="modalBhGenderDetails"></span></div>
+                <div class="col-sm-6 mb-2"><strong>Monthly Rate:</strong> <span id="modalBhPriceDetails" class="fw-bold"></span></div>
+              </div>
+              <hr>
+              <h5><i class="bi bi-wifi text-primary me-2"></i>Amenities</h5>
+              <p id="modalBhAmenitiesDetails" class="ps-3"></p>
+              <!-- [BAG-O] Section para ipakita ang Terms and Regulations -->
+              <hr>
+              <h5><i class="bi bi-file-text-fill text-primary me-2"></i>Terms & Regulations</h5>
+              <p id="modalBhTermsDetails" class="ps-3" style="white-space: pre-wrap;"></p>
+              <hr>
+              <h5><i class="bi bi-telephone-fill text-primary me-2"></i>Contact & Socials</h5>
+              <!-- [GI-AYO] Gidugang ang missing <p> tag para sa phone number -->
+              <p id="modalBhPhoneDetails" class="ps-3"><strong>Contact:</strong> <span id="modalBhPhoneSpan"></span></p>
+              <div id="modalBhFacebookDetails" class="ps-3"></div>
+              <div id="modalBhWebsiteDetails" class="ps-3"></div>
+            </div>
+            <!-- Right Column: Map, Address, and Room Rates -->
+            <div class="col-lg-5">
+              <div class="p-3 bg-light rounded-3">
+                <p class="mb-2"><i class="bi bi-geo-alt-fill text-primary me-2"></i><strong>Address:</strong> <span id="modalBhAddressDetails"></span></p>
+                <div id="detailMapOwner" style="height: 200px; border-radius: 8px; border: 1px solid #ddd; width: 100%;" class="mb-3"></div>
+                <p id="map-message-details" class="text-muted small text-center"></p>
+              </div>
+              <hr>
+              <!-- Room Rates Section -->
+              <div class="mt-3">
+                <button class="btn btn-success w-100" type="button" id="viewRoomRatesBtn-owner-modal">
+                  <i class="bi bi-tags-fill me-2"></i> View Room Rates
+                </button>
+                <div class="collapse mt-2" id="roomRatesCollapse-owner-modal">
+                  <div class="list-group" id="roomRatesContainer-owner-modal">
+                    <!-- Room rates will be injected here by JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>&copy; 2025 Directory-Based Boarding House Finder | All Rights Reserved</p>
+  </footer>
+
+  </div> <!-- End of page-container -->
+
+    <script src="bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="ownerdashboard.js"></script>
+    <script>
+      // [BAG-O] Override logout behavior to redirect to home page (index.html)
+      document.addEventListener('DOMContentLoaded', () => {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+          const newBtn = logoutBtn.cloneNode(true);
+          logoutBtn.parentNode.replaceChild(newBtn, logoutBtn);
+          newBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+              await fetch('http://localhost:8000/user?action=logout', { 
+                method: 'DELETE', 
+                credentials: 'include' 
+              });
+            } catch (error) {
+              console.error('Logout error:', error);
+            } finally {
+              sessionStorage.removeItem('currentUser');
+              window.location.href = 'index.html';
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

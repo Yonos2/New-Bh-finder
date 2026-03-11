@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | BH Finder</title> 
+   <link rel="icon" href="images/bh2.png" type="image/jpeg">
+  <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="admin-dashboard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!--  [BAG-O] Leaflet.js para sa Mapa sa Details Modal -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  </head>
+<body>
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+      <span class="navbar-brand">BH Finder</span>
+      <button class="btn btn-light btn-sm" id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="container d-flex align-items-center justify-content-between">
+      <div>
+        <h2 class="mb-1">Admin Dashboard</h2>
+        <p class="mb-0 opacity-75">Welcome, <span id="adminName"></span></p>
+      </div>
+      <div class="d-none d-md-block">
+        <i class="bi bi-shield-lock-fill" style="font-size:40px; opacity:.9"></i>
+      </div>
+    </div>
+  </section>
+
+  <div class="container py-4">
+    <div class="row">
+      <!--  [GI-USAB] Gibalhin ang duha ka card ngadto sa sulod sa usa ka Accordion -->
+      <div class="col-12">
+        <div class="accordion" id="managementAccordion">
+
+          <!-- Accordion Item #1: Boarding House Management -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingBhManagement">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBhManagement" aria-expanded="true" aria-controls="collapseBhManagement">
+                <i class="bi bi-house-gear-fill me-2"></i> Boarding House Management
+                <div class="spinner-border spinner-border-sm text-primary ms-auto d-none" id="loadingSpinner" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </button>
+            </h2>
+            <div id="collapseBhManagement" class="accordion-collapse collapse show" aria-labelledby="headingBhManagement" data-bs-parent="#managementAccordion">
+              <div class="accordion-body p-0">
+                <ul class="list-group list-group-flush" id="bh-management-list">
+                  <!-- Ang sulod ani kay gikan sa admin-dashboard.js -->
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accordion Item #2: User Management -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingUserManagement">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUserManagement" aria-expanded="false" aria-controls="collapseUserManagement">
+                <i class="bi bi-people-fill me-2"></i> User Management
+                <div class="spinner-border spinner-border-sm text-primary ms-auto d-none" id="userLoadingSpinner" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </button>
+            </h2>
+            <div id="collapseUserManagement" class="accordion-collapse collapse" aria-labelledby="headingUserManagement" data-bs-parent="#managementAccordion">
+              <div class="accordion-body p-0">
+                <ul class="list-group list-group-flush" id="user-management-list">
+                  <!-- Ang sulod ani kay gikan sa admin-dashboard.js -->
+                </ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Viewing a Single Image -->
+  <div class="modal fade" id="imageViewerModal" tabindex="-1" aria-labelledby="imageViewerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="imageViewerModalLabel">Image Preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img src="" id="fullImageView" class="img-fluid" alt="Full-size image preview">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- [BAG-O] Modal para sa Rason sa Pag-reject -->
+  <div class="modal fade" id="rejectionModal" tabindex="-1" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="rejectionModalLabel">Reason for Rejection</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="rejectionForm">
+            <input type="hidden" id="rejectionBhId">
+            <div class="mb-3">
+              <label for="rejectionReason" class="form-label">Please provide a reason for rejecting this boarding house:</label>
+              <textarea class="form-control" id="rejectionReason" rows="4" required placeholder="ex., Incomplete address, invalid images, etc."></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmRejectBtn">Confirm Rejection</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- [BAG-O] Modal para sa pag-view sa Boarding House Details (para sa Admin) -->
+  <div class="modal fade" id="bhDetailsModal-admin" tabindex="-1" aria-labelledby="bhDetailsModalLabel-admin" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bhDetailsModalLabel-admin">Boarding House Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <!-- Left Column: Images and Map -->
+            <div class="col-lg-7">
+              <!-- Carousel para sa mga hulagway -->
+              <div id="carousel-container-details-admin" class="mb-3">
+                <!-- Ang sulod sa carousel i-generate sa JavaScript -->
+              </div>
+              <!-- Mapa -->
+              <h6 class="border-bottom pb-2 mb-3">Location Map</h6>
+              <div id="detailMapAdmin" style="height: 300px; border-radius: 8px; border: 1px solid #ddd;"></div>
+              <p id="map-message-details-admin" class="text-muted small mt-2"></p>
+            </div>
+            <!-- Right Column: Details -->
+            <div class="col-lg-5">
+              <h6 class="border-bottom pb-2 mb-3">Information</h6>
+              <p><i class="bi bi-geo-alt-fill text-primary"></i> <strong>Address:</strong> <span id="modalBhAddressDetails-admin"></span></p>
+              <p><i class="bi bi-telephone-fill text-primary"></i> <strong>Phone:</strong> <span id="modalBhPhoneDetails-admin"></span></p>
+              <p><i class="bi bi-door-closed-fill text-primary"></i> <strong>Rooms Available:</strong> <span id="modalBhRoomsDetails-admin"></span></p>
+              <p><i class="bi bi-aspect-ratio-fill text-primary"></i> <strong>Beds per Room:</strong> <span id="modalBhBedsDetails-admin"></span></p>
+              <p><i class="bi bi-gender-ambiguous text-primary"></i> <strong>Gender:</strong> <span id="modalBhGenderDetails-admin"></span></p>
+              <p><i class="bi bi-cash-coin text-primary"></i> <strong>Monthly Rate:</strong> ₱<span id="modalBhPriceDetails-admin"></span></p>
+              <div id="modalBhFacebookDetails-admin" class="d-none"></div>
+
+              <h6 class="border-bottom pb-2 mt-4 mb-3">Amenities</h6>
+              <p id="modalBhAmenitiesDetails-admin"></p>
+
+              <!-- [BAG-O] Section para sa Terms and Regulations -->
+              <h6 class="border-bottom pb-2 mt-4 mb-3">Terms & Regulations</h6>
+              <p id="modalBhTermsDetails-admin" style="white-space: pre-wrap;"></p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <!-- Hidden input para i-store ang BH ID -->
+          <input type="hidden" id="modalBhId-admin">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <!-- [GI-USAB] Ang reject button mo-trigger na sa rejection modal -->
+          <button type="button" class="btn btn-danger" id="modalRejectBtn-admin">
+            <i class="bi bi-x-circle-fill"></i> Reject
+          </button>
+          <button type="button" class="btn btn-success" id="modalApproveBtn-admin">
+            <i class="bi bi-check-circle-fill"></i> Approve
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="admin-dashboard.js"></script>
+  <script>
+    // [BAG-O] Override logout behavior to redirect to home page (index.html)
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        const newBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(newBtn, logoutBtn);
+        newBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          try {
+            await fetch('http://localhost:8000/user?action=logout', { 
+              method: 'DELETE', 
+              credentials: 'include' 
+            });
+          } catch (error) {
+            console.error('Logout error:', error);
+          } finally {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

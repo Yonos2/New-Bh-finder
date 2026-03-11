@@ -1,0 +1,136 @@
+/* === STYLES PARA SA TENANT-DASHBOARD.HTML === */
+
+/* --- [BAG-O] STICKY FOOTER & PAGE STRUCTURE --- */
+#page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#content-wrap {
+  flex: 1; /* Mo-take up sa available space */
+}
+
+/* --- GENERAL STYLES --- */
+body {
+  background-color: #f8f9fa;
+}
+
+.page-hero {
+  background: linear-gradient(135deg, #0d6efd 0%, #4dabf7 100%);
+  color: #fff;
+  padding: 1.5rem 0; /* [GI-AYO] Gihimong mas compact */
+}
+
+.card-text .bi {
+  margin-right: 0.3rem;
+}
+
+.modal-header {
+  border-bottom: none;
+  border-top-left-radius: var(--bs-modal-inner-border-radius);
+  border-top-right-radius: var(--bs-modal-inner-border-radius);
+}
+
+/* --- [FIX] Z-index for Image Viewer Modal --- */
+/* Ensure the image viewer appears on top of other modals. */
+#imageViewerModal {
+  z-index: 1060;
+}
+
+/* --- [GI-AYO] MAP VIEW STYLES --- */
+
+/* Kung active ang mapa, itago ang scrollbar sa body */
+body.map-is-active {
+  overflow: hidden;
+}
+
+#map-view {
+  /* [KATAPUSANG SOLUSYON] Itago sa sinugdanan gamit ang opacity ug pointer-events. */
+  /* Kini magpabilin sa iyang gidak-on sa layout. */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  position: fixed; /* I-okupar ang tibuok viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1050; /* Ibutang ubos sa modal (1055) pero taas sa tanan */
+  background-color: #fff; /* Background sa mapa */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Nindot nga transition */
+}
+
+body.map-is-active #map-view {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#full-map-container {
+  height: 100%;
+  width: 100%;
+  /* [KATAPUSANG SOLUSYON] Ibutang sa pinaka-ubos para dili matabunan ang controls */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* --- MAP OVERLAYS (Search bar, buttons) --- */
+
+.map-search-bar-container {
+  position: absolute;
+  /* Ang z-index sa sulod sa map-view kay relative na sa 1050 */
+  z-index: 10; 
+  top: 20px; /* Ibutang 20px gikan sa taas */
+  left: 50%; /* I-sentro horizontally */
+  transform: translateX(-50%); /* I-adjust para ma-sakto ang sentro */
+  width: 90%; /* I-set ang gilapdon */
+  max-width: 400px; /* Maximum nga gilapdon */
+}
+
+#map-search-suggestions {
+  top: 100%;
+  bottom: auto;
+  left: 0;
+  right: 0;
+}
+
+.map-controls {
+  position: absolute;
+  /* Ibutang sa ubos-tuo para dili mag-conflict sa search bar */
+  bottom: 20px; 
+  right: 20px; 
+  display: flex;
+  flex-direction: row; /* I-align horizontally */
+  gap: 10px;
+  z-index: 10;
+}
+
+.map-controls .btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 1.2rem;
+}
+
+/* [BAG-O] Style para sa gagmay nga hulagway sa kwarto sulod sa modal */
+.room-thumbnail {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border: 2px solid transparent;
+  border-radius: 5px;
+}
+
+.room-thumbnail:hover {
+  transform: scale(1.05); /* [BAG-O] Ipadako gamay on hover */
+  border-color: #0d6efd;
+}
+
+/* === [GI-PABILIN] CSS FIX PARA SA LEAFLET MAP NGA DILI MAKITA === */
+
+/* I-force ang mga map tiles nga mag-display */
+.leaflet-tile-container {
+  visibility: visible !important;
+  opacity: 1 !important;
+}

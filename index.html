@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Directory-Based Boarding House Finder | Dapitan City</title>
+  <link rel="icon" href="images/bh2.png" type="image/jpeg">
+  <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <!-- [BAG-O] Leaflet.js CSS para sa Mapa -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <div id="page-container"> <!-- Wrapper para sa sticky footer -->
+
+  <!-- NAVIGATION BAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="images/bh2.png" alt="BH Finder Logo" width="50" height="50" class="me-2">
+        <span class="fw-bold">Directory-Based Boarding House Finder</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+       <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+          <!-- [GI-USAB] Gihimong dropdown ang Sign Up para sa Owner ug Tenant -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="signupDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Sign Up
+            </a>
+            <!-- [GI-AYO] Gipanindot ang dropdown menu para mas professional tan-awon -->
+            <ul class="dropdown-menu p-2" aria-labelledby="signupDropdown">
+              <li>
+                <a class="dropdown-item rounded-2" href="owner-signup.html">
+                  <i class="bi bi-house-heart-fill me-2 text-primary"></i> As an Owner
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item rounded-2" href="tenant-signup.html">
+                <i class="bi bi-person-check-fill me-2 text-primary"></i> As a Tenant
+              </a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="user-login.html">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="admin-signup.html">Admin</a></li>
+       </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div id="content-wrap"> <!-- Content wrapper para sa sticky footer -->
+    <!-- HERO SECTION -->
+    <header class="hero text-blue text-center py-5">
+      <div class="container">
+        <h1 class="display-4 fw-bold">Find Your Ideal Boarding House</h1>
+        <p class="lead">Connecting tenants and owners with comfort and convenience in Dapitan City.</p>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="py-4">
+      <div class="container" id="bh-list-container">
+        <!-- [BAG-O] PRICE RANGE FILTER BUTTONS -->
+        <section class="mb-4 text-center">
+          <h4 class="fw-bold text-dark border-bottom pb-2 mb-4">BH Price Range</h4>
+          <div class="btn-group shadow-sm" role="group" aria-label="Price range filter">
+            <button type="button" class="btn btn-outline-primary price-range-btn" data-min="0" data-max="999999">All</button>
+            <button type="button" class="btn btn-outline-primary price-range-btn" data-min="1000" data-max="1500">₱1000 - ₱1500</button>
+            <button type="button" class="btn btn-outline-primary price-range-btn" data-min="1501" data-max="2000">₱1501 - ₱2000</button>
+            <button type="button" class="btn btn-outline-primary price-range-btn" data-min="2001" data-max="2500">₱2001 - ₱2500</button>
+            <button type="button" class="btn btn-outline-primary price-range-btn" data-min="2501" data-max="3000">₱2501 - ₱3000</button>
+            <button type="button" class="btn btn-outline-primary price-range-btn" data-min="3001" data-max="999999">₱3001+</button>
+          </div>
+        </section>
+
+        <!-- RESULTS SECTION -->
+        <section>
+          <div class="row" id="bh-list">
+            <!-- Boarding houses injected by JS -->
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- [BAG-O] Modal para sa pagtan-aw sa mga Detalye sa Boarding House -->
+    <div class="modal fade" id="bhDetailModal" tabindex="-1" aria-labelledby="bhDetailModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="bhDetailModalLabel">Boarding House Details</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-7">
+                <!-- Carousel para sa mga hulagway -->
+                <div id="bhDetailCarousel" class="mb-3">
+                  <!-- Carousel will be injected here by JS -->
+                </div>
+                <h3 id="bhDetailName" class="h4"></h3>
+                <p><i class="bi bi-geo-alt-fill text-primary"></i> <strong>Address:</strong> <span id="bhDetailAddress"></span></p>
+                <p><i class="bi bi-cash-coin text-primary"></i> <strong>Monthly Rate:</strong> <span id="bhDetailPrice"></span></p>
+                <hr>
+                <h5><i class="bi bi-card-checklist text-primary"></i> Details</h5>
+                <ul class="list-unstyled ps-3">
+                  <li><strong>Available Rooms:</strong> <span id="bhDetailRooms"></span></li>
+                  <li><strong>Beds per Room:</strong> <span id="bhDetailBeds"></span></li>
+                  <li><strong>Gender Allowed:</strong> <span id="bhDetailGender"></span></li>
+                </ul>
+                <hr>
+                <h5><i class="bi bi-wifi text-primary"></i> Amenities</h5>
+                <p id="bhDetailAmenities" class="ps-3"></p>
+                <!-- [BAG-O] Section para ipakita ang Terms and Regulations -->
+                <hr>
+                <h5><i class="bi bi-file-text-fill text-primary"></i> Terms & Regulations</h5>
+                <p id="bhDetailTerms" class="ps-3" style="white-space: pre-wrap;"></p>
+                <hr>
+                <h5><i class="bi bi-telephone-fill text-primary"></i> Contact Owner</h5>
+                <p id="bhDetailPhone" class="ps-3"></p>
+                <p id="bhDetailFacebook" class="ps-3"></p>
+              </div>
+              <div class="col-md-5">
+                <h5><i class="bi bi-map-fill text-primary"></i> Location Map</h5>
+                <div id="bhDetailMap" style="height: 250px; border-radius: 8px; border: 1px solid #ddd;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="homeBookNowBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- [BAG-O] Modal para sa "Login Required" -->
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginRequiredModalLabel"><i class="bi bi-exclamation-triangle-fill text-warning"></i> Login/Signup Required</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>you need to signup/login first to view the full details of the boarding house</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="user-login.html" class="btn btn-primary">Login / Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>&copy; 2025 Directory-Based Boarding House Finder | All Rights Reserved</p>
+  </footer>
+
+  </div> <!-- End of page-container -->
+
+  <script src="bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <!-- [GI-AYO] Gi-apil ang main.js para sa logic sa home page, apil ang pagsusi sa login status -->
+  <script src="main.js"></script>
+  <!-- [BAG-O] Leaflet.js JS para sa Mapa -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body>
+</html>

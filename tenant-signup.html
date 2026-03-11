@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tenant Sign Up | BH Finder</title>
+   <link rel="icon" href="images/bh2.png" type="image/jpeg">
+
+  <!-- 🎨 Bootstrap styling -->
+  <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-light">
+  <!-- 🏠 Centered signup card -->
+  <div class="container d-flex justify-content-center align-items-center min-vh-100 py-4">
+    <div class="card shadow-lg p-4 rounded-4" style="max-width: 450px; width: 100%;">
+      <div class="text-center mb-4">
+        <i class="bi bi-person-check-fill fs-1 text-primary"></i>
+        <h3 class="fw-bold mt-2">Tenant Signup</h3>
+        <p class="text-muted">Create an account to find a room</p>
+      </div>
+
+      <!-- ✅ Tenant Signup Form -->
+      <form id="signupForm">
+        <div class="mb-3">
+          <input type="text" class="form-control" id="fullname" name="full_name" placeholder="Full Name" required autocomplete="name">
+        </div>
+        <div class="mb-3">
+          <input type="text" class="form-control" id="username" name="username" placeholder="Username" required autocomplete="username">
+        </div>
+        <div class="mb-3">
+          <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required autocomplete="email">
+        </div>
+        <!--  [GI-USAB] Gihimong input group para sa show/hide password -->
+        <div class="mb-3 input-group">
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password" required autocomplete="new-password">
+          <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+            <i class="bi bi-eye-slash"></i>
+          </button>
+        </div>
+        <div class="mb-3">
+          <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number" required autocomplete="tel">
+        </div>
+        
+        <!-- Hidden input para sa role, kanunay 'tenant' -->
+        <input type="hidden" id="role" name="role" value="tenant">
+
+        <button type="submit" class="btn btn-primary w-100 fw-semibold">Sign Up as Tenant</button>
+
+        <div class="text-center mt-3">
+          <small>
+            Already have an account?
+            <a href="user-login.html" class="text-primary fw-semibold">Login</a>
+          </small>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ⚙️ JS libraries -->
+  <script src="bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="signup.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login | BH Finder</title>
+   <link rel="icon" href="images/bh2.png" type="image/jpeg">
+  <!-- Bootstrap styling -->
+  <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-light">
+  <!--  Centered login card -->
+  <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4 rounded-4" style="max-width: 400px; width: 100%;">
+      <div class="text-center mb-4">
+        <i class="bi bi-person-plus-fill fs-1 text-primary"></i>
+        <h3 class="fw-bold mt-2">User Login</h3>
+        <p class="text-muted">Enter your credentials to login</p>
+      </div>
+
+      <!--  Usa ra ka form (no nested forms) -->
+      <form id="userLoginForm">
+        <div class="mb-3">
+          <input type="text" class="form-control" id="username" placeholder="Username" required autocomplete="username">
+        </div>
+        <!--  [GI-USAB] Gihimong input group para sa show/hide password -->
+        <div class="mb-3 input-group">
+          <input type="password" class="form-control" id="password" placeholder="Password" required autocomplete="current-password">
+          <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+            <i class="bi bi-eye-slash"></i>
+          </button>
+        </div>
+        <!-- [BAG-O] Forgot Password Link -->
+        <div class="text-end mb-3">
+          <a href="forgot-password.html" class="text-decoration-none small text-primary">Forgot Password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 fw-semibold">Login</button>
+
+        <div class="text-center mt-3">
+          <small>
+            Don't have an account?
+            <span class="dropdown">
+              <a href="#" class="text-primary fw-semibold dropdown-toggle text-decoration-none" role="button" id="signupOptions" data-bs-toggle="dropdown" aria-expanded="false">
+                Sign Up
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="signupOptions">
+                <li><a class="dropdown-item" href="tenant-signup.html"><i class="bi bi-person-check-fill me-2"></i>As Tenant</a></li>
+                <li><a class="dropdown-item" href="owner-signup.html"><i class="bi bi-house-heart-fill me-2"></i>As Owner</a></li>
+              </ul>
+            </span>
+          </small>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!--  JS libraries -->
+  <script src="bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>

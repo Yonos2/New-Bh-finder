@@ -1,0 +1,128 @@
+/* --- GLOBAL STYLES (Gigamit sa daghang pages) --- */
+body {
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  color: #374151;
+}
+
+/* --- NAVBAR (Global) --- */
+.navbar {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+.navbar .nav-link {
+  font-weight: 500;
+  margin-right: 10px;
+  transition: color 0.2s;
+}
+.navbar .nav-link:hover {
+  color: #dbeafe !important;
+}
+
+/* --- HERO SECTION (Para sa index.html) --- */ 
+.hero {
+  background: url('images/bh2.png') center/cover no-repeat;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: rgb(47, 47, 136); /* Gibag-o gikan sa white ngadto sa blue */
+}
+.hero h1 {
+  font-size: 2.8rem;
+  font-weight: bold;
+}
+.hero p {
+  font-size: 1.2rem;
+  margin-top: 8px;
+}
+
+/* --- SEARCH BOX (Para sa index.html) --- */
+.search-box {
+  margin-top: -40px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+#searchBox {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 1.05rem;
+  padding: 0.7rem 1.1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+#searchBox:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
+}
+
+/* --- BUTTONS (Global) --- */
+.btn-primary {
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.55rem 1.2rem;
+  box-shadow: 0 2px 8px rgba(13,110,253,0.15);
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 16px rgba(13,110,253,0.25);
+  opacity: 0.95;
+}
+
+/* --- CARD DESIGN (Para sa Boarding House list sa index.html ug tenant-dashboard.html) --- */
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: 1px solid var(--bs-border-color-translucent); /* [GI-USAB] Nipis nga border */
+  border-radius: 12px; /* [GI-USAB] Softer corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* [GI-USAB] Mas subtle nga shadow */
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important; /* [GI-USAB] Mas klaro nga shadow on hover */
+}
+.card-img-top {
+  border-top-left-radius: 11px; /* [GI-USAB] I-match sa card's border-radius */
+  border-top-right-radius: 11px;
+  height: 200px;
+  object-fit: cover;
+}
+.card-title {
+  font-weight: 600;
+  color: #1e293b;
+}
+.card-text {
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+/* --- FOOTER (Global) --- */
+.footer {
+  background: #0d6efd;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+  margin-top: 50px;
+  font-size: 0.95rem;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+}
+.footer p {
+  margin: 0;
+}
+
+/* [BAG-O] CSS para sa collapsible icon sa tenant-dashboard */
+.collapse-icon {
+  transition: transform 0.3s ease;
+}
+
+/* I-rotate ang icon kung dili collapsed (gipakita ang content) */
+a[aria-expanded="true"] .collapse-icon {
+  transform: rotate(180deg);
+}

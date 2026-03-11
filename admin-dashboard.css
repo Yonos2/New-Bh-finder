@@ -1,0 +1,27 @@
+/* === STYLES PARA SA ADMIN-DASHBOARD.HTML === */
+
+/* --- General Page Styles --- */
+body { background-color: #f1f3f5; }
+
+.page-hero {
+  /* 🎨 Lahi nga kolor para sa Admin Dashboard (dark/gray theme) */
+  background: linear-gradient(135deg, #495057 0%, #212529 100%);
+  color: #fff;
+}
+
+.page-hero .container { padding: 28px 0; }
+
+/* --- Accordion Styles --- */
+.accordion-button:not(.collapsed) {
+    color: var(--bs-primary-text-emphasis);
+    background-color: var(--bs-primary-bg-subtle);
+}
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* --- [FIX] Z-index for Image Viewer Modal --- */
+/* Ensure the image viewer appears on top of other modals. */
+#imageViewerModal {
+  z-index: 1060;
+}
